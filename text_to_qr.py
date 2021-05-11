@@ -6,6 +6,10 @@ import tkinter.font as tkFont
 
 import pyqrcode
 
+import os
+from os.path import exists
+from os import remove
+
 
 class textToQr:
     def __init__(self, root) -> None:
@@ -72,6 +76,8 @@ class textToQr:
         save_button.place(x=150, y=550, width=70, height=25)
         exit_button.place(x=250, y=550, width=70, height=25)
 
+        self.temp_image_file = "QRCode.png"
+
     def check_if_text_box_is_empty(self, text):
         try:
             check_empty_box = text == ''
@@ -92,14 +98,12 @@ class textToQr:
 
     def display_qr(self):
         qr_data = self.generate_qr()
-        temp_image_file = "QRCode.png"
-        qr_data.png(temp_image_file, scale=4)
-        self.image = tk.PhotoImage(file=temp_image_file)
+        qr_data.png(self.temp_image_file, scale=4)
+        self.image = tk.PhotoImage(file=self.temp_image_file)
         self.display_qr_label.configure(image=self.image)
 
     def save_qr_as_image(self):
-        temp_image_file = "QRCode.png"
-        image_file = open(temp_image_file, 'rb')
+        image_file = open(self.temp_image_file, 'rb')
         read_image_file = image_file.read()
         save_as = asksaveasfilename(defaultextension='.png',
                                     filetypes=(("Png file", ".png"),
@@ -111,9 +115,14 @@ class textToQr:
             output_file.close()
         image_file.close()
 
+    def delete_temp_image_file_on_exit(self):
+        if exists(self.temp_image_file):
+            remove(self.temp_image_file)
+
     def exit(self):
         confirm_exit = askyesno("Confirm Exit", "Do you want to exit?")
         if confirm_exit:
+            self.delete_temp_image_file_on_exit()
             root.destroy()
 
 

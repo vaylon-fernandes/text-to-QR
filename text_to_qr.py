@@ -130,4 +130,5 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = textToQr(root)
     root.protocol("WM_DELETE_WINDOW", app.exit)
+    root.resizable(False, False)
     root.mainloop()
